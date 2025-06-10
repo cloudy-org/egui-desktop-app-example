@@ -14,8 +14,6 @@ For more advanced and up to date material you'll want to read into the source co
 
 </div>
 
-<br>
-
 ## How to run example in dev mode.
 
 1. Clone repo.
