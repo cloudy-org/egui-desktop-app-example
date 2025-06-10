@@ -1,0 +1,23 @@
+[package]
+name = "egui-desktop-app-example"
+version = "0.1.0-alpha.1"
+edition = "2024"
+authors = ["Goldy <example@example.com>"] # this will be used in the cirrus about window.
+license = "GPL-3.0"
+repository = "https://github.com/cloudy-org/egui-desktop-app-example/"
+rust-version = "1.85" # you might require a newer rust version, feel free to upgrade it.
+
+[dependencies]
+cirrus_egui = { path = "./cirrus/egui" }
+cirrus_theming = { path = "./cirrus/theming" }
+
+egui = "0.31.1"
+eframe = "0.31.1"
+egui_extras = { version = "0.31.1", features = ["image", "http"] }
+
+log = "0.4.27"
+env_logger = "0.11.8"
+clap_derive = "4.5.40"
+clap = {version = "4.5.40", features = ["derive"]}
+# Add more image formats that you would like egui to support.
+image = { version = "0.25", features = ["jpeg"] }
