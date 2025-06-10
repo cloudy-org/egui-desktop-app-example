@@ -33,7 +33,7 @@ impl<'a> AboutWindow<'a> {
         };
 
         let about_widget = About::new(
-            include_image!("../../assets/weeb_easter_egg.jpg"), about_app_info
+            include_image!("../../assets/rikka.jpg"), about_app_info
         );
 
         Self {
