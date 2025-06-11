@@ -10,7 +10,7 @@ For more advanced and up to date material you'll want to read into the source co
 
 <div align="center">
 
-  <img width="500px" src="./assets/showcase_1.png"/>
+  <img src="./assets/showcase_1.png"/>
 
 </div>
 
