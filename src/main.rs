@@ -1,79 +1,78 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-use std::env;
+use std::time::Duration;
 
 use log::LevelFilter;
 use eframe::NativeOptions;
-use cirrus_egui::v1::styling::Styling;
-use cirrus_theming::v1::Theme;
-use clap::{arg, command, Parser};
+use cirrus_egui::v1::{config_manager::ConfigManager, styling::Styling, notifier::Notifier};
+use cirrus_theming::v1::{colour::Colour, theme::Theme};
 
+use clap::Parser;
+
+use egui_notify::ToastLevel;
+use env_logger::Builder;
+
+use config::config::Config;
 use app::ExampleApp;
 
 mod app;
-mod windows;
+mod achievements;
+mod about_window;
+mod config;
+mod settings;
 
-/// Example Egui desktop app at cloudy-org.
+static APP_NAME: &str = "egui-desktop-app-example";
+static TEMPLATE_CONFIG_TOML_STRING: &str = include_str!("../assets/config.template.toml");
+
+/// Example egui desktop app at cloudy-org.
 #[derive(Parser, Debug)]
 #[clap(author = "Author Name")]
 #[command(version, about, long_about = None)]
-struct Args {
-    /// Valid themes at the moment: dark, light
-    #[arg(short, long)]
-    theme: Option<String>,
-}
+struct Args {}
 
 fn main() -> eframe::Result {
-    match env::var("RUST_LOG").is_ok() {
-        true => {
-            env_logger::init();
-        },
-        false => {
-            env_logger::builder()
-                .filter_level(LevelFilter::Warn)
-                .init();
-        },
-    }
+    Builder::from_default_env()
+        .filter_level(LevelFilter::Warn)
+        .filter_module("zbus", LevelFilter::Off)
+        .filter_module("sctk", LevelFilter::Off)
+        .filter_module("winit", LevelFilter::Off)
+        .filter_module("tracing", LevelFilter::Off)
+        .parse_default_env()
+        .init();
 
-    let cli_args = Args::parse();
+    let notifier = Notifier::new();
 
-    let theme_string = cli_args.theme;
-
-    let is_dark = match theme_string {
-        Some(string) => {
-            match string.as_str() {
-                "light" => false,
-                "dark" => true,
-                _ => {
-                    log::warn!(
-                        "'{}' is not a valid theme. Pass either 'dark' or 'light'.", string
-                    );
-
-                    true
+    let config_manager: ConfigManager<Config> = match ConfigManager::new(APP_NAME, TEMPLATE_CONFIG_TOML_STRING) {
+        Ok(config_manager) => config_manager,
+        Err(error) => {
+            notifier.toast(
+                format!(
+                    "Error occurred initializing {}'s config file! \
+                    Falling back to default config! Error: {}", APP_NAME, error.human_message()
+                ),
+                ToastLevel::Error,
+                |toast| {
+                    toast.duration(Some(Duration::from_secs(10)));
                 }
-            }
-        },
-        _ => true
+            );
+
+            ConfigManager::default()
+        }
     };
 
-    let theme = Theme::new(
-        is_dark,
-        vec![],
-        None
-    );
+    let theme = Theme::new(Some(Colour::from_hex(0xe05f78)));
 
     eframe::run_native(
-        "Example App",
+        "Nijika Clicker",
         NativeOptions::default(),
         Box::new(|cc| {
-            // Required to add support for images.
             egui_extras::install_image_loaders(&cc.egui_ctx);
 
-            Styling::new(&theme, None)
+            Styling::new(&theme)
                 .set_all()
                 .apply(&cc.egui_ctx);
 
-            Ok(Box::new(ExampleApp::new(theme)))
+            Ok(Box::new(ExampleApp::new(theme, notifier, config_manager)))
         }),
     )
 }
