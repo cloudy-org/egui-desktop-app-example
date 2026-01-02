@@ -32,8 +32,8 @@ git submodule update --init --recursive
 cargo run
 ```
 
-You can also mess around with the theming by passing `--theme light` like so:
+You can also mess around with the theming by passing something like `CTK_THEME=LIGHT`:
 
 ```sh
-cargo run -- --theme light
+CTK_THEME=LIGHT cargo run
 ```
