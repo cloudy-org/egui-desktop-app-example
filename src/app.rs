@@ -3,8 +3,8 @@ use std::time::Duration;
 use cirrus_theming::v1::theme::Theme;
 use eframe::{egui::{self, Context}};
 
-use cirrus_egui::v1::{config_manager::ConfigManager, notifier::Notifier, widgets::settings::Settings, ui_utils::center_multi::ui_multiple_centered_double_render};
-use egui::{CursorIcon, Key, RichText, Vec2, Sense};
+use cirrus_egui::v1::{config_manager::ConfigManager, notifier::Notifier, widgets::settings::Settings};
+use egui::{CursorIcon, Key, RichText, Sense};
 use egui_notify::ToastLevel;
 
 use crate::{about_window::AboutWindow, achievements, settings::SettingsMenu, config::config::Config};
